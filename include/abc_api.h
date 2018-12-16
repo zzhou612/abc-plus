@@ -17,5 +17,6 @@
 #include <base/main/main.h>
 #include <map/mio/mio.h>
 #include <opt/ret/retInt.h>
+#include <bdd/cudd/cudd.h>
 
 #endif

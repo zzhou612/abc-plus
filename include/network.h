@@ -23,54 +23,58 @@ namespace abc_plus {
     //---------------------------------------------------------------------------
     // Network Functions
     //---------------------------------------------------------------------------
-    NtkPtr ReadBlif(const std::string &i_file);
+    NtkPtr NtkReadBlif(const std::string &i_file);
 
-    NtkPtr WriteBlif(const std::string &o_file);
+    void NtkWriteBlif(NtkPtr ntk, const std::string &o_file);
 
-    NtkPtr Duplicate(NtkPtr ntk);
+    NtkPtr NtkDuplicate(NtkPtr ntk);
 
-    NtkPtr DuplicateDFS(NtkPtr ntk);
+    NtkPtr NtkDuplicateDFS(NtkPtr ntk);
 
-    std::vector<ObjPtr> GetObjs(NtkPtr ntk);
+    std::vector<ObjPtr> NtkObjs(NtkPtr ntk);
 
-    std::vector<ObjPtr> GetPIs(NtkPtr ntk);
+    std::vector<ObjPtr> NtkNodes(NtkPtr ntk);
 
-    std::vector<ObjPtr> GetPOs(NtkPtr ntk);
+    std::vector<ObjPtr> NtkPIs(NtkPtr ntk);
 
-    ObjPtr GetObjbyID(NtkPtr ntk, int id);
+    std::vector<ObjPtr> NtkPOs(NtkPtr ntk);
 
-    ObjPtr GetPIbyName(NtkPtr ntk, std::string name);
+    ObjPtr NtkObjbyID(NtkPtr ntk, int id);
 
-    ObjPtr GetNodebyName(NtkPtr ntk, std::string name);
+    ObjPtr NtkPIbyName(NtkPtr ntk, std::string name);
+
+    ObjPtr NtkNodebyName(NtkPtr ntk, std::string name);
 
     //---------------------------------------------------------------------------
     // Object Functions
     //---------------------------------------------------------------------------
-    bool IsPI(ObjPtr obj);
+    bool ObjIsPI(ObjPtr obj);
 
-    bool IsPO(ObjPtr obj);
+    bool ObjIsPO(ObjPtr obj);
 
-    bool IsPONode(ObjPtr obj);
+    bool ObjIsPONode(ObjPtr obj);
 
-    unsigned int GetID(ObjPtr obj);
+    std::string ObjName(ObjPtr obj);
 
-    NtkPtr GetHostNetwork(ObjPtr obj);
+    unsigned int ObjID(ObjPtr obj);
 
-    ObjPtr GetFanin0(ObjPtr obj);
+    NtkPtr ObjHostNtk(ObjPtr obj);
 
-    ObjPtr GetFanin1(ObjPtr obj);
+    ObjPtr ObjFanin0(ObjPtr obj);
 
-    std::vector<ObjPtr> GetFanins(ObjPtr obj);
+    ObjPtr ObjFanin1(ObjPtr obj);
 
-    std::vector<ObjPtr> GetFanouts(ObjPtr obj);
+    std::vector<ObjPtr> ObjFanins(ObjPtr obj);
 
-    void ReplaceObj(ObjPtr obj_old, ObjPtr obj_new);
+    std::vector<ObjPtr> ObjFanouts(ObjPtr obj);
 
-    void RecoverObj(ObjPtr obj, ObjPtr obj_bak);
+    void ObjReplace(ObjPtr obj_old, ObjPtr obj_new);
 
-    ObjPtr CreateInv(ObjPtr fan_in);
+    void ObjRecover(ObjPtr obj, ObjPtr obj_bak);
 
-    void DeleteObj(ObjPtr obj);
+    ObjPtr ObjCreateInv(ObjPtr fan_in);
+
+    void ObjDelete(ObjPtr obj);
 }
 
 #endif
