@@ -13,7 +13,9 @@
 #include <network.h>
 
 namespace abc_plus {
-    std::vector<ObjPtr> TopologicalSort(NtkPtr ntk);
+    std::vector<ObjPtr> NtkTopoSortPINode(NtkPtr ntk);
+
+    std::vector<ObjPtr> NtkTopoSortNode(NtkPtr ntk);
 }
 
 #endif
