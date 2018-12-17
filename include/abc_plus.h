@@ -11,5 +11,6 @@
 
 #include <network.h>
 #include <utils.h>
+#include <simulator.h>
 
 #endif
