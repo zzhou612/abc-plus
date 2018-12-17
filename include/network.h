@@ -54,6 +54,8 @@ namespace abc_plus {
 
     bool ObjIsPONode(ObjPtr obj);
 
+    bool ObjIsNode(ObjPtr obj);
+
     std::string ObjName(ObjPtr obj);
 
     unsigned int ObjID(ObjPtr obj);

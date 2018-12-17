@@ -245,6 +245,10 @@ namespace abc_plus {
         return false;
     }
 
+    bool ObjIsNode(ObjPtr obj) {
+        return (bool) abc::Abc_ObjIsNode(obj);
+    }
+
     std::string ObjName(ObjPtr obj) {
         return std::string(Abc_ObjName(obj));
     }
