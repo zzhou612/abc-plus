@@ -17,16 +17,15 @@
 #include <simulator.h>
 
 namespace abc_plus {
-    enum class GateType : int {
+    enum struct GateType : int {
         CONST0, CONST1, WIRE, AND, INV
     };
 
-    enum class AndType : int {
+    enum struct AndType : int {
         AND0, AND1, AND2, AND3 // 00 01 10 11
     };
 
-    class GateInfo {
-    public:
+    struct GateInfo {
         GateType gate_type;
         AndType and_type;
         bool is_complement;
