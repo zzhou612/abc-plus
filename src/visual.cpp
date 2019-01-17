@@ -9,7 +9,6 @@
 #include <visual.h>
 
 namespace abc {
-
     static char *PLUS_Abc_NtkPrintSop(char *pSop) {
         static char Buffer[1000];
         char *pGet, *pSet;
