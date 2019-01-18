@@ -25,6 +25,8 @@ namespace abc_plus {
     //---------------------------------------------------------------------------
     NtkPtr NtkReadBlif(const std::string &i_file);
 
+    NtkPtr NtkReadBench(const std::string &i_file);
+
     void NtkWriteBlif(NtkPtr ntk, const std::string &o_file);
 
     NtkPtr NtkDuplicate(NtkPtr ntk);

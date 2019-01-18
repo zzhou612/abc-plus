@@ -158,8 +158,16 @@ namespace abc_plus {
     // Network Functions
     //---------------------------------------------------------------------------
     NtkPtr NtkReadBlif(const std::string &i_file) {
-        NtkPtr ntk = abc::Io_ReadBlif((char *) i_file.c_str(), 1);
-        ntk = abc::Abc_NtkToLogic(ntk);
+        NtkPtr tmp, ntk = abc::Io_ReadBlif((char *) i_file.c_str(), 1);
+        ntk = Abc_NtkToLogic(tmp = ntk);
+        abc::Abc_NtkDelete(tmp);
+        return ntk;
+    }
+
+    NtkPtr NtkReadBench(const std::string &i_file) {
+        NtkPtr tmp, ntk = abc::Io_ReadBench((char *) i_file.c_str(), 1);
+        ntk = abc::Abc_NtkToLogic(tmp = ntk);
+        abc::Abc_NtkDelete(tmp);
         return ntk;
     }
 
