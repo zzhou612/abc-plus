@@ -7,7 +7,6 @@
  */
 
 #include <iostream>
-#include <cstdint>
 #include <unordered_map>
 #include <functional>
 #include <random>
@@ -143,6 +142,40 @@ namespace abc_plus {
             ObjVal(obj) = ~ObjVal(obj);
     }
 
+    std::unordered_map<ObjPtr, std::vector<uint64_t>> SimTruthVec(NtkPtr ntk, bool show_progress_bar, int sim_time) {
+        std::default_random_engine generator((unsigned) std::chrono::system_clock::now().time_since_epoch().count());
+        std::uniform_int_distribution<uint64_t> distribution(0, UINT64_MAX);
+        auto dice = std::bind(distribution, generator);
+        int er = 0;
+        auto pis = NtkPIs(ntk);
+        auto pos = NtkPOs(ntk);
+        auto topo_nodes = NtkTopoSortNode(ntk);
+        for (auto const &obj : NtkObjs(ntk))
+            obj->pTemp = ObjCreateGateInfo(obj);
+
+        boost::progress_display *pd = nullptr;
+        if (show_progress_bar)
+            pd = new boost::progress_display((unsigned long) sim_time / 64);
+
+        for (int _ = 0; _ < sim_time / 64; ++_) {
+            if (show_progress_bar)
+                ++(*pd);
+            for (auto const &pi : pis)
+                ObjVal(pi) = dice();
+            for (auto const &obj : topo_nodes)
+                ObjSim(obj);
+            for (auto const &po : pos)
+                ObjVal(po) = ObjVal(ObjFanin0(po));
+            uint64_t res = 0;
+
+        }
+
+        for (auto obj : NtkNodes(ntk))
+            delete (GateInfo *) obj->pTemp;
+
+        return std::unordered_map<ObjPtr, std::vector<uint64_t>>();
+    }
+
     double SimER(NtkPtr origin, NtkPtr approx, bool show_progress_bar, int sim_time) {
         std::default_random_engine generator((unsigned) std::chrono::system_clock::now().time_since_epoch().count());
         std::uniform_int_distribution<uint64_t> distribution(0, UINT64_MAX);
@@ -154,9 +187,9 @@ namespace abc_plus {
         auto approx_pis = NtkPIs(approx);
         auto approx_pos = NtkPOs(approx);
         auto approx_topo_nodes = NtkTopoSortNode(approx);
-        for (auto obj : NtkObjs(origin))
+        for (auto const &obj : NtkObjs(origin))
             obj->pTemp = ObjCreateGateInfo(obj);
-        for (auto obj : NtkObjs(approx))
+        for (auto const &obj : NtkObjs(approx))
             obj->pTemp = ObjCreateGateInfo(obj);
 
         boost::progress_display *pd = nullptr;
@@ -171,13 +204,13 @@ namespace abc_plus {
                 ObjVal(origin_pis[i]) = rand_val;
                 ObjVal(approx_pis[i]) = rand_val;
             }
-            for (const auto obj : origin_topo_nodes)
+            for (auto const &obj : origin_topo_nodes)
                 ObjSim(obj);
-            for (const auto po : origin_pos)
+            for (auto const &po : origin_pos)
                 ObjVal(po) = ObjVal(ObjFanin0(po));
-            for (const auto obj : approx_topo_nodes)
+            for (auto const &obj : approx_topo_nodes)
                 ObjSim(obj);
-            for (const auto po : approx_pos)
+            for (auto const &po : approx_pos)
                 ObjVal(po) = ObjVal(ObjFanin0(po));
             uint64_t res = 0;
             for (int i = 0; i < (int) origin_pos.size(); i++)
@@ -185,9 +218,9 @@ namespace abc_plus {
             er += std::bitset<64>(res).count();
         }
 
-        for (auto obj : NtkNodes(origin))
+        for (auto const &obj : NtkNodes(origin))
             delete (GateInfo *) obj->pTemp;
-        for (auto obj : NtkNodes(approx))
+        for (auto const &obj : NtkNodes(approx))
             delete (GateInfo *) obj->pTemp;
         return (double) er / (double) sim_time;
     }

@@ -9,11 +9,14 @@
 #ifndef ABC_PLUS_SIMULATOR_H
 #define ABC_PLUS_SIMULATOR_H
 
+#include <cstdint>
 #include <abc_api.h>
 #include <network.h>
 #include <utils.h>
 
 namespace abc_plus {
+    std::unordered_map<ObjPtr, std::vector<uint64_t >> SimTruthVec(NtkPtr ntk, bool show_progress_bar = false, int sim_time = 100000);
+
     double SimER(NtkPtr origin, NtkPtr approx, bool show_progress_bar = false, int sim_time = 100000);
 }
 

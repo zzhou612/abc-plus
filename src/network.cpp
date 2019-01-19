@@ -247,7 +247,7 @@ namespace abc_plus {
     }
 
     bool ObjIsPONode(ObjPtr obj) {
-        for (auto &fan_out : ObjFanouts(obj))
+        for (auto const &fan_out : ObjFanouts(obj))
             if (ObjIsPO(fan_out))
                 return true;
         return false;
