@@ -142,22 +142,27 @@ namespace abc_plus {
             ObjVal(obj) = ~ObjVal(obj);
     }
 
-    std::unordered_map<ObjPtr, std::vector<uint64_t>> SimTruthVec(NtkPtr ntk, bool show_progress_bar, int sim_time) {
+    std::unordered_map<ObjPtr, std::vector<uint64_t>> SimTruthVec(NtkPtr ntk, bool show_progress_bar, int sim_64_cycles) {
+        std::unordered_map<ObjPtr, std::vector<uint64_t>> truth_vec;
         std::default_random_engine generator((unsigned) std::chrono::system_clock::now().time_since_epoch().count());
         std::uniform_int_distribution<uint64_t> distribution(0, UINT64_MAX);
         auto dice = std::bind(distribution, generator);
-        int er = 0;
+        auto objs = NtkObjs(ntk);
         auto pis = NtkPIs(ntk);
         auto pos = NtkPOs(ntk);
         auto topo_nodes = NtkTopoSortNode(ntk);
-        for (auto const &obj : NtkObjs(ntk))
+
+        for (auto const &obj : objs) {
             obj->pTemp = ObjCreateGateInfo(obj);
+            truth_vec.emplace(obj, std::vector<uint64_t>());
+            truth_vec.at(obj).reserve(sim_64_cycles);
+        }
 
         boost::progress_display *pd = nullptr;
         if (show_progress_bar)
-            pd = new boost::progress_display((unsigned long) sim_time / 64);
+            pd = new boost::progress_display((unsigned long) sim_64_cycles);
 
-        for (int _ = 0; _ < sim_time / 64; ++_) {
+        for (int _ = 0; _ < sim_64_cycles; ++_) {
             if (show_progress_bar)
                 ++(*pd);
             for (auto const &pi : pis)
@@ -166,17 +171,17 @@ namespace abc_plus {
                 ObjSim(obj);
             for (auto const &po : pos)
                 ObjVal(po) = ObjVal(ObjFanin0(po));
-            uint64_t res = 0;
-
+            for (auto const &obj : objs)
+                truth_vec.at(obj).push_back(ObjVal(obj));
         }
 
         for (auto obj : NtkNodes(ntk))
             delete (GateInfo *) obj->pTemp;
 
-        return std::unordered_map<ObjPtr, std::vector<uint64_t>>();
+        return truth_vec;
     }
 
-    double SimER(NtkPtr origin, NtkPtr approx, bool show_progress_bar, int sim_time) {
+    double SimER(NtkPtr origin, NtkPtr approx, bool show_progress_bar, int sim_cycles) {
         std::default_random_engine generator((unsigned) std::chrono::system_clock::now().time_since_epoch().count());
         std::uniform_int_distribution<uint64_t> distribution(0, UINT64_MAX);
         auto dice = std::bind(distribution, generator);
@@ -194,9 +199,9 @@ namespace abc_plus {
 
         boost::progress_display *pd = nullptr;
         if (show_progress_bar)
-            pd = new boost::progress_display((unsigned long) sim_time / 64);
+            pd = new boost::progress_display((unsigned long) sim_cycles / 64);
 
-        for (int _ = 0; _ < sim_time / 64; ++_) {
+        for (int _ = 0; _ < sim_cycles / 64; ++_) {
             if (show_progress_bar)
                 ++(*pd);
             for (int i = 0; i < (int) origin_pis.size(); i++) {
@@ -222,6 +227,6 @@ namespace abc_plus {
             delete (GateInfo *) obj->pTemp;
         for (auto const &obj : NtkNodes(approx))
             delete (GateInfo *) obj->pTemp;
-        return (double) er / (double) sim_time;
+        return (double) er / (double) sim_cycles;
     }
 }

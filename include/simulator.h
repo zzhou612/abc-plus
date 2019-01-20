@@ -15,9 +15,9 @@
 #include <utils.h>
 
 namespace abc_plus {
-    std::unordered_map<ObjPtr, std::vector<uint64_t >> SimTruthVec(NtkPtr ntk, bool show_progress_bar = false, int sim_time = 100000);
+    std::unordered_map<ObjPtr, std::vector<uint64_t >> SimTruthVec(NtkPtr ntk, bool show_progress_bar = false, int sim_64_cycles = 10000);
 
-    double SimER(NtkPtr origin, NtkPtr approx, bool show_progress_bar = false, int sim_time = 100000);
+    double SimER(NtkPtr origin, NtkPtr approx, bool show_progress_bar = false, int sim_cycles = 100000);
 }
 
 
