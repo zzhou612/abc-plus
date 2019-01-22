@@ -10,6 +10,7 @@
 #define ABC_PLUS_SIMULATOR_H
 
 #include <cstdint>
+#include <unordered_map>
 #include <abc_api.h>
 #include <network.h>
 #include <utils.h>
