@@ -23,6 +23,8 @@ namespace abc_plus {
     //---------------------------------------------------------------------------
     // Network Functions
     //---------------------------------------------------------------------------
+    void NtkPrintInfo(NtkPtr ntk, bool verbose = false);
+
     NtkPtr NtkReadBlif(const std::string &i_file);
 
     NtkPtr NtkReadBench(const std::string &i_file);
@@ -47,9 +49,13 @@ namespace abc_plus {
 
     ObjPtr NtkNodebyName(NtkPtr ntk, std::string name);
 
+    ObjPtr NtkPObyName(NtkPtr ntk, std::string name);
+
     //---------------------------------------------------------------------------
     // Object Functions
     //---------------------------------------------------------------------------
+    void ObjPrintInfo(ObjPtr obj, bool verbose = false);
+
     bool ObjIsPI(ObjPtr obj);
 
     bool ObjIsPO(ObjPtr obj);

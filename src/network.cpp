@@ -6,6 +6,8 @@
  * @bug No known bugs.
  */
 
+#include <iostream>
+#include <iomanip>
 #include <network.h>
 
 namespace abc {
@@ -157,6 +159,20 @@ namespace abc_plus {
     //---------------------------------------------------------------------------
     // Network Functions
     //---------------------------------------------------------------------------
+    void NtkPrintInfo(NtkPtr ntk, bool verbose) {
+        std::string ntk_types[] = {"ABC_NTK_NONE",      // 0:  unknown
+                                   "ABC_NTK_NETLIST",   // 1:  network with PIs/POs, latches, nodes, and nets
+                                   "ABC_NTK_LOGIC",     // 2:  network with PIs/POs, latches, and nodes
+                                   "ABC_NTK_STRASH",    // 3:  structurally hashed AIG (two input AND gates with c-attributes on edges)
+                                   "ABC_NTK_OTHER"};    // 4:  unused
+        std::cout << "Network Type: " << ntk_types[ntk->ntkType] << std::endl;
+        for (auto const &obj : NtkObjs(ntk)) {
+            if (verbose)
+                std::cout << "---------------------------------------------------------------------------" << std::endl;
+            ObjPrintInfo(obj, verbose);
+        }
+    }
+
     NtkPtr NtkReadBlif(const std::string &i_file) {
         NtkPtr tmp, ntk = abc::Io_ReadBlif((char *) i_file.c_str(), 1);
         ntk = Abc_NtkToLogic(tmp = ntk);
@@ -175,9 +191,7 @@ namespace abc_plus {
         abc::Io_WriteBlifLogic(abc::PLUS_Abc_NtkDup(ntk), (char *) o_file.c_str(), 0); // CHECK
     }
 
-    NtkPtr NtkDuplicate(NtkPtr ntk) {
-        return abc::PLUS_Abc_NtkDup(ntk);
-    }
+    NtkPtr NtkDuplicate(NtkPtr ntk) { return abc::PLUS_Abc_NtkDup(ntk); }
 
     NtkPtr NtkDuplicateDFS(NtkPtr ntk) {
         return abc::PLUS_Abc_NtkDupDfs(ntk);
@@ -223,21 +237,44 @@ namespace abc_plus {
         return pos;
     }
 
-    ObjPtr NtkObjbyID(NtkPtr ntk, int id) {
-        return abc::Abc_NtkObj(ntk, id);
-    }
+    ObjPtr NtkObjbyID(NtkPtr ntk, int id) { return abc::Abc_NtkObj(ntk, id); }
 
-    ObjPtr NtkPIbyName(NtkPtr ntk, std::string name) {
-        return abc::Abc_NtkFindCi(ntk, (char *) name.c_str());
-    }
+    ObjPtr NtkPIbyName(NtkPtr ntk, std::string name) { return abc::Abc_NtkFindCi(ntk, (char *) name.c_str()); }
 
-    ObjPtr NtkNodebyName(NtkPtr ntk, std::string name) {
-        return abc::Abc_NtkFindNode(ntk, (char *) name.c_str());
-    }
+    ObjPtr NtkNodebyName(NtkPtr ntk, std::string name) { return abc::Abc_NtkFindNode(ntk, (char *) name.c_str()); }
+
+    ObjPtr NtkPObyName(NtkPtr ntk, std::string name) { return abc::Abc_NtkFindCo(ntk, (char *) name.c_str()); }
 
     //---------------------------------------------------------------------------
     // Object Functions
     //---------------------------------------------------------------------------
+    void ObjPrintInfo(ObjPtr obj, bool verbose) {
+        std::string obj_types[12] = {"ABC_OBJ_NONE",       //  0:  unknown
+                                     "ABC_OBJ_CONST1",     //  1:  constant 1 node (AIG only)
+                                     "ABC_OBJ_PI",         //  2:  primary input terminal
+                                     "ABC_OBJ_PO",         //  3:  primary output terminal
+                                     "ABC_OBJ_BI",         //  4:  box input terminal
+                                     "ABC_OBJ_BO",         //  5:  box output terminal
+                                     "ABC_OBJ_NET",        //  6:  net
+                                     "ABC_OBJ_NODE",       //  7:  node
+                                     "ABC_OBJ_LATCH",      //  8:  latch
+                                     "ABC_OBJ_WHITEBOX",   //  9:  box with known contents
+                                     "ABC_OBJ_BLACKBOX",   // 10:  box with unknown contents
+                                     "ABC_OBJ_NUMBER"};    // 11:  unused
+        std::cout << "Obj:" << std::setw(4) << ObjName(obj)
+                  << " ID:" << std::setw(3) << ObjID(obj)
+                  << " Type: " << std::setw(12) << obj_types[obj->Type] << std::endl;
+        if (verbose) {
+            std::cout << "Fanins:  ";
+            for (auto const &fan_in : ObjFanins(obj))
+                std::cout << ObjName(fan_in) << " ";
+            std::cout << std::endl << "Fanouts: ";
+            for (auto const &fan_out : ObjFanouts(obj))
+                std::cout << ObjName(fan_out) << " ";
+            std::cout << std::endl;
+        }
+    }
+
     bool ObjIsPI(ObjPtr obj) {
         return (bool) abc::Abc_ObjIsPi(obj);
     }
@@ -297,9 +334,7 @@ namespace abc_plus {
         return fan_outs;
     }
 
-    void ObjReplace(ObjPtr obj_old, ObjPtr obj_new) {
-        abc::Abc_ObjTransferFanout(obj_old, obj_new);
-    }
+    void ObjReplace(ObjPtr obj_old, ObjPtr obj_new) { abc::Abc_ObjTransferFanout(obj_old, obj_new); }
 
     void ObjRecover(ObjPtr obj, ObjPtr obj_bak) {
         for (const auto &fan_out_bak : ObjFanouts(obj_bak)) {
@@ -312,11 +347,7 @@ namespace abc_plus {
         }
     }
 
-    ObjPtr ObjCreateInv(ObjPtr fan_in) {
-        return abc::Abc_NtkCreateNodeInv(ObjHostNtk(fan_in), fan_in);
-    }
+    ObjPtr ObjCreateInv(ObjPtr fan_in) { return abc::Abc_NtkCreateNodeInv(ObjHostNtk(fan_in), fan_in); }
 
-    void ObjDelete(ObjPtr obj) {
-        abc::Abc_NtkDeleteObj(obj);
-    }
+    void ObjDelete(ObjPtr obj) { abc::Abc_NtkDeleteObj(obj); }
 }
