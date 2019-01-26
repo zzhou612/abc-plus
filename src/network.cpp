@@ -193,9 +193,9 @@ namespace abc_plus {
 
     NtkPtr NtkDuplicate(NtkPtr ntk) { return abc::PLUS_Abc_NtkDup(ntk); }
 
-    NtkPtr NtkDuplicateDFS(NtkPtr ntk) {
-        return abc::PLUS_Abc_NtkDupDfs(ntk);
-    }
+    NtkPtr NtkDuplicateDFS(NtkPtr ntk) { return abc::PLUS_Abc_NtkDupDfs(ntk); }
+
+    void NtkDelete(NtkPtr ntk) { abc::Abc_NtkDelete(ntk); }
 
     std::vector<ObjPtr> NtkObjs(NtkPtr ntk) {
         abc::Abc_Obj_t *obj;

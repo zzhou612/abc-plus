@@ -35,6 +35,8 @@ namespace abc_plus {
 
     NtkPtr NtkDuplicateDFS(NtkPtr ntk);
 
+    void NtkDelete(NtkPtr ntk);
+
     std::vector<ObjPtr> NtkObjs(NtkPtr ntk);
 
     std::vector<ObjPtr> NtkNodes(NtkPtr ntk);
