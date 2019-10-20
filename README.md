@@ -1,3 +1,3 @@
 # abc-plus
 
-Project under development.
+A C++ wrapper of Berkeley ABC.
